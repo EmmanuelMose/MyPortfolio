@@ -94,7 +94,8 @@ CREATE TABLE "hero_profile" (
 	"greeting" varchar(255) NOT NULL,
 	"bio" text NOT NULL,
 	"cv_cloudinary_url" varchar(500),
-	"cv_image_url" varchar(500),
+	"cv_upload_url" varchar(500),
+	"profile_image_cloudinary_url" varchar(500),
 	"profile_image_url" varchar(500),
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -151,6 +152,7 @@ CREATE TABLE "registered_admins" (
 	"last_login" timestamp,
 	"reset_code" varchar(10),
 	"reset_code_expires_at" timestamp,
+	"is_code_verified" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "registered_admins_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

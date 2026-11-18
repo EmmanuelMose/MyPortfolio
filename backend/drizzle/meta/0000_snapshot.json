@@ -1,5 +1,5 @@
 {
-  "id": "f5525d45-92af-47a2-8a92-255c5727f77b",
+  "id": "10a0997c-be75-4479-8a25-2b17384fc449",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -552,8 +552,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "cv_image_url": {
-          "name": "cv_image_url",
+        "cv_upload_url": {
+          "name": "cv_upload_url",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_image_cloudinary_url": {
+          "name": "profile_image_cloudinary_url",
           "type": "varchar(500)",
           "primaryKey": false,
           "notNull": false
@@ -890,6 +896,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_code_verified": {
+          "name": "is_code_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},

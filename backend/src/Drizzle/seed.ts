@@ -27,7 +27,6 @@ const seed = async () => {
       greeting: "Hi, It's",
       bio: "I am a computer science student at Masinde Muliro University, Innovative and results-driven Software Developer with a solid background in full-stack web development, data analysis, and UI/UX design. Passionate about building scalable applications and intuitive user experiences. Skilled in modern technologies including React.js, Node.js, Django, and Express.js, with experience delivering high-quality solutions. Proficient in data analysis and visualization, enabling data-driven decision-making. Adept at cross-functional collaboration, project management, and leveraging cloud computing to deploy reliable applications.",
       cvCloudinaryUrl: null,
-      cvImageUrl: null,
       profileImageUrl: null,
     });
 
