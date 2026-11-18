@@ -7,6 +7,8 @@ import cors from "cors";
 import authRouter from "./auth/auth.router.js";
 import cloudinaryRouter from "./cloudinary/cloudinary.router.js";
 import heroProfileRouter from "./hero-profile/hero-profile.router.js";
+import heroSkillsRouter from "./hero-skills/hero-skills.router.js";
+
 
 const initializeApp = () => {
   const app = express();
@@ -49,6 +51,7 @@ const initializeApp = () => {
   app.use("/api/auth", authRouter);
   app.use("/api/cloudinary", cloudinaryRouter);
   app.use("/api/hero-profile", heroProfileRouter);
+  app.use("/api/hero-skills", heroSkillsRouter);
 
   return app;
 };
