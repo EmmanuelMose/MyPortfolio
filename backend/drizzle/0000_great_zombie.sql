@@ -149,6 +149,8 @@ CREATE TABLE "registered_admins" (
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"last_login" timestamp,
+	"reset_code" varchar(10),
+	"reset_code_expires_at" timestamp,
 	CONSTRAINT "registered_admins_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

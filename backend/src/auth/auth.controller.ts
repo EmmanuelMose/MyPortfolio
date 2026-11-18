@@ -3,6 +3,7 @@ import {
   registerService,
   loginService,
   forgotPasswordService,
+  verifyResetCodeService,
   resetPasswordService,
   getMeService,
 } from "./auth.service.js";
@@ -68,7 +69,25 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
     }
 
     await forgotPasswordService(email);
-    res.json({ success: true, message: "Password reset link sent to your email" });
+    res.json({ success: true, message: "Password reset code sent to your email" });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const verifyResetCodeController = async (req: Request, res: Response) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({
+        success: false,
+        message: "email and code are required",
+      });
+    }
+
+    await verifyResetCodeService(email, code);
+    res.json({ success: true, message: "Code verified successfully" });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -76,12 +95,12 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 
 export const resetPasswordController = async (req: Request, res: Response) => {
   try {
-    const { token, newPassword } = req.body;
+    const { email, code, newPassword } = req.body;
 
-    if (!token || !newPassword) {
+    if (!email || !code || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: "token and newPassword are required",
+        message: "email, code, and newPassword are required",
       });
     }
 
@@ -92,7 +111,7 @@ export const resetPasswordController = async (req: Request, res: Response) => {
       });
     }
 
-    await resetPasswordService(token, newPassword);
+    await resetPasswordService(email, code, newPassword);
     res.json({ success: true, message: "Password reset successfully" });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });

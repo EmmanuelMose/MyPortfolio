@@ -22,6 +22,9 @@ export const registeredAdmins = pgTable("registered_admins", {
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastLogin: timestamp("last_login"),
+  resetCode: varchar("reset_code", { length: 10 }),
+  resetCodeExpiresAt: timestamp("reset_code_expires_at"),
+  isCodeVerified: boolean("is_code_verified").default(false).notNull(),
 });
 
 export const heroProfile = pgTable("hero_profile", {

@@ -148,51 +148,69 @@ export const forgotPasswordService = async (email: string) => {
     throw new Error("Admin with this email not found");
   }
 
-  const resetToken = jwt.sign(
-    { id: admin.id, email: admin.email, purpose: "password_reset" },
-    JWT_SECRET,
-    { expiresIn: "15m" }
-  );
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-  const resetLink = `${process.env.ADMIN_FRONTEND_URL}/reset-password?token=${resetToken}`;
+  await db
+    .update(registeredAdmins)
+    .set({ resetCode, resetCodeExpiresAt: expiresAt })
+    .where(eq(registeredAdmins.id, admin.id));
 
   const html = `
-    <h2>Password Reset Request</h2>
+    <h2>Password Reset Code</h2>
     <p>Hello ${admin.firstName},</p>
-    <p>You requested to reset your password. Click the link below to set a new password:</p>
-    <p><a href="${resetLink}" style="display: inline-block; padding: 12px 24px; background: #1565C0; color: #fff; text-decoration: none; border-radius: 6px;">Reset Password</a></p>
-    <p>This link will expire in 15 minutes.</p>
+    <p>You requested to reset your password. Your 6-digit reset code is:</p>
+    <h1 style="color: #1565C0; font-size: 32px; background: #f0f4ff; padding: 15px; border-radius: 8px; text-align: center; letter-spacing: 5px;">${resetCode}</h1>
+    <p>This code will expire in 15 minutes.</p>
     <p>If you did not request this, please ignore this email.</p>
   `;
 
-  await sendEmail(email, "Password Reset - Portfolio Admin", "Reset your password using the link sent to your email.", html);
+  await sendEmail(
+    email,
+    "Password Reset Code - Portfolio Admin",
+    `Your password reset code is: ${resetCode}`,
+    html
+  );
 };
 
-export const resetPasswordService = async (token: string, newPassword: string) => {
-  let decoded: any;
-
-  try {
-    decoded = jwt.verify(token, JWT_SECRET);
-    if (decoded.purpose !== "password_reset") {
-      throw new Error("Invalid token purpose");
-    }
-  } catch (error) {
-    throw new Error("Invalid or expired reset token");
-  }
-
+export const verifyResetCodeService = async (email: string, code: string) => {
   const admin = await db.query.registeredAdmins.findFirst({
-    where: eq(registeredAdmins.id, decoded.id),
+    where: eq(registeredAdmins.email, email),
   });
 
-  if (!admin) {
-    throw new Error("Admin not found");
+  if (!admin || !admin.resetCode || admin.resetCode !== code) {
+    throw new Error("Invalid reset code");
+  }
+
+  if (admin.resetCodeExpiresAt && new Date() > admin.resetCodeExpiresAt) {
+    throw new Error("Reset code has expired. Please request a new one.");
+  }
+
+  return true;
+};
+
+export const resetPasswordService = async (email: string, code: string, newPassword: string) => {
+  const admin = await db.query.registeredAdmins.findFirst({
+    where: eq(registeredAdmins.email, email),
+  });
+
+  if (!admin || !admin.resetCode || admin.resetCode !== code) {
+    throw new Error("Invalid reset code");
+  }
+
+  if (admin.resetCodeExpiresAt && new Date() > admin.resetCodeExpiresAt) {
+    throw new Error("Reset code has expired. Please request a new one.");
   }
 
   const passwordHash = await bcrypt.hash(newPassword, 10);
 
   await db
     .update(registeredAdmins)
-    .set({ passwordHash })
+    .set({
+      passwordHash,
+      resetCode: null,
+      resetCodeExpiresAt: null,
+    })
     .where(eq(registeredAdmins.id, admin.id));
 
   await sendEmail(

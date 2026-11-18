@@ -1,5 +1,5 @@
 {
-  "id": "1c421f89-1e2c-4662-97eb-5575f47f3625",
+  "id": "f5525d45-92af-47a2-8a92-255c5727f77b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -875,6 +875,18 @@
         },
         "last_login": {
           "name": "last_login",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reset_code": {
+          "name": "reset_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reset_code_expires_at": {
+          "name": "reset_code_expires_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
