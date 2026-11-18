@@ -26,3 +26,11 @@ export const uploadSingle = (fieldName: string, maxSizeMB: number = 10) => {
     fileFilter,
   }).single(fieldName);
 };
+
+export const uploadFields = (fields: { name: string; maxCount: number }[], maxSizeMB: number = 10) => {
+  return multer({
+    storage,
+    limits: { fileSize: maxSizeMB * 1024 * 1024 },
+    fileFilter,
+  }).fields(fields);
+};
