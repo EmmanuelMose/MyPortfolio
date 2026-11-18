@@ -1,0 +1,1 @@
+ALTER TABLE "registered_admins" ADD COLUMN "is_code_verified" boolean DEFAULT false NOT NULL;

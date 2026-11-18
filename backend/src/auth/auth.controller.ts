@@ -95,12 +95,12 @@ export const verifyResetCodeController = async (req: Request, res: Response) => 
 
 export const resetPasswordController = async (req: Request, res: Response) => {
   try {
-    const { email, code, newPassword } = req.body;
+    const { email, newPassword } = req.body;
 
-    if (!email || !code || !newPassword) {
+    if (!email || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: "email, code, and newPassword are required",
+        message: "email and newPassword are required",
       });
     }
 
@@ -111,7 +111,7 @@ export const resetPasswordController = async (req: Request, res: Response) => {
       });
     }
 
-    await resetPasswordService(email, code, newPassword);
+    await resetPasswordService(email, newPassword);
     res.json({ success: true, message: "Password reset successfully" });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });

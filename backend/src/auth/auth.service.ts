@@ -149,11 +149,11 @@ export const forgotPasswordService = async (email: string) => {
   }
 
   const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
 
   await db
     .update(registeredAdmins)
-    .set({ resetCode, resetCodeExpiresAt: expiresAt })
+    .set({ resetCode, resetCodeExpiresAt: expiresAt, isCodeVerified: false })
     .where(eq(registeredAdmins.id, admin.id));
 
   const html = `
@@ -161,7 +161,7 @@ export const forgotPasswordService = async (email: string) => {
     <p>Hello ${admin.firstName},</p>
     <p>You requested to reset your password. Your 6-digit reset code is:</p>
     <h1 style="color: #1565C0; font-size: 32px; background: #f0f4ff; padding: 15px; border-radius: 8px; text-align: center; letter-spacing: 5px;">${resetCode}</h1>
-    <p>This code will expire in 15 minutes.</p>
+    <p>This code will expire in 5 minutes.</p>
     <p>If you did not request this, please ignore this email.</p>
   `;
 
@@ -186,20 +186,25 @@ export const verifyResetCodeService = async (email: string, code: string) => {
     throw new Error("Reset code has expired. Please request a new one.");
   }
 
+  await db
+    .update(registeredAdmins)
+    .set({ isCodeVerified: true })
+    .where(eq(registeredAdmins.id, admin.id));
+
   return true;
 };
 
-export const resetPasswordService = async (email: string, code: string, newPassword: string) => {
+export const resetPasswordService = async (email: string, newPassword: string) => {
   const admin = await db.query.registeredAdmins.findFirst({
     where: eq(registeredAdmins.email, email),
   });
 
-  if (!admin || !admin.resetCode || admin.resetCode !== code) {
-    throw new Error("Invalid reset code");
+  if (!admin) {
+    throw new Error("Admin not found");
   }
 
-  if (admin.resetCodeExpiresAt && new Date() > admin.resetCodeExpiresAt) {
-    throw new Error("Reset code has expired. Please request a new one.");
+  if (!admin.isCodeVerified) {
+    throw new Error("You must verify your reset code before changing your password.");
   }
 
   const passwordHash = await bcrypt.hash(newPassword, 10);
@@ -208,6 +213,7 @@ export const resetPasswordService = async (email: string, code: string, newPassw
     .update(registeredAdmins)
     .set({
       passwordHash,
+      isCodeVerified: false,
       resetCode: null,
       resetCodeExpiresAt: null,
     })
