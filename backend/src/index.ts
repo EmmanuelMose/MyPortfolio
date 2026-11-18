@@ -1,9 +1,11 @@
-
 import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
 import cors from "cors";
+
+import authRouter from "./auth/auth.router.js";
+import cloudinaryRouter from "./cloudinary/cloudinary.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -42,6 +44,9 @@ const initializeApp = () => {
   app.get("/", (_req, res) => {
     res.send("Emmanuel Guru Portfolio Backend running successfully!");
   });
+
+  app.use("/api/auth", authRouter);
+  app.use("/api/cloudinary", cloudinaryRouter);
 
   return app;
 };
