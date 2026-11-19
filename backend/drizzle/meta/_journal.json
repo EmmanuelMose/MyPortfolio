@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1795007932184,
-      "tag": "0000_bent_dazzler",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1795080896705,
-      "tag": "0001_blue_ben_urich",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1795092052279,
-      "tag": "0002_early_strong_guy",
+      "when": 1795093761743,
+      "tag": "0000_furry_legion",
       "breakpoints": true
     }
   ]

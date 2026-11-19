@@ -1,1 +1,0 @@
-ALTER TABLE "registered_admins" ADD COLUMN "can_approve_downloads" boolean DEFAULT false NOT NULL;

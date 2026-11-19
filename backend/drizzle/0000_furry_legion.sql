@@ -48,6 +48,7 @@ CREATE TABLE "contact" (
 	"phone_number" varchar(50) NOT NULL,
 	"message" text NOT NULL,
 	"contact_method" varchar(50) NOT NULL,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -147,6 +148,7 @@ CREATE TABLE "registered_admins" (
 	"last_name" varchar(255) NOT NULL,
 	"phone_number" varchar(50) NOT NULL,
 	"role" "admin_role" DEFAULT 'admin' NOT NULL,
+	"can_approve_downloads" boolean DEFAULT false NOT NULL,
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"last_login" timestamp,

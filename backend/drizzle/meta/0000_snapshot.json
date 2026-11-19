@@ -1,5 +1,5 @@
 {
-  "id": "10a0997c-be75-4479-8a25-2b17384fc449",
+  "id": "c4a4776f-b917-47de-9153-edb6d029de4a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -285,6 +285,13 @@
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
         },
         "created_at": {
           "name": "created_at",
@@ -864,6 +871,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'admin'"
+        },
+        "can_approve_downloads": {
+          "name": "can_approve_downloads",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "is_active": {
           "name": "is_active",
