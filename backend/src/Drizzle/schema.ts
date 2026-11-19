@@ -8,7 +8,6 @@ export const admins = pgTable("admins", {
   addedBy: integer("added_by"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
-
 export const registeredAdmins = pgTable("registered_admins", {
   id: serial("id").primaryKey(),
   adminEmailId: integer("admin_email_id").notNull().references(() => admins.id),
@@ -19,6 +18,7 @@ export const registeredAdmins = pgTable("registered_admins", {
   lastName: varchar("last_name", { length: 255 }).notNull(),
   phoneNumber: varchar("phone_number", { length: 50 }).notNull(),
   role: adminRoleEnum("role").default("admin").notNull(),
+  canApproveDownloads: boolean("can_approve_downloads").default(false).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastLogin: timestamp("last_login"),
@@ -26,7 +26,6 @@ export const registeredAdmins = pgTable("registered_admins", {
   resetCodeExpiresAt: timestamp("reset_code_expires_at"),
   isCodeVerified: boolean("is_code_verified").default(false).notNull(),
 });
-
 export const heroProfile = pgTable("hero_profile", {
   id: serial("id").primaryKey(),
   fullName: varchar("full_name", { length: 255 }).notNull(),

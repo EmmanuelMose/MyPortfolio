@@ -163,18 +163,13 @@ const seed = async () => {
     ]);
 
     await db.insert(setting).values([
-      { settingKey: "max_admin_limit", settingValue: "5" },
-      {
-        settingKey: "footer_copyright",
-        settingValue: "All rights reserved © EmmanuelMose 2025",
-      },
-      { settingKey: "super_admin_whatsapp", settingValue: "254718146250" },
-      {
-        settingKey: "super_admin_email",
-        settingValue: "emmanuelmose10204@gmail.com",
-      },
-      { settingKey: "site_title", settingValue: "Emmanuel Guru Portfolio" },
-    ]);
+  { settingKey: "max_admin_limit", settingValue: "5" },
+  { settingKey: "footer_copyright", settingValue: "All rights reserved © EmmanuelMose 2025" },
+  { settingKey: "super_admin_whatsapp", settingValue: "254718146250" },
+  { settingKey: "super_admin_email", settingValue: "emmanuelmose10204@gmail.com" },
+  { settingKey: "site_title", settingValue: "Emmanuel Guru Portfolio" },
+  { settingKey: "downloads_enabled", settingValue: "true" },
+]);
 
     await db.insert(education).values([
       {

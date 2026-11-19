@@ -11,6 +11,7 @@ export interface AuthRequest extends Request {
     id: number;
     email: string;
     role: "super_admin" | "admin";
+    canApproveDownloads: boolean;
   };
 }
 
@@ -23,10 +24,7 @@ export const authenticate = async (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "No token provided",
-      });
+      return res.status(401).json({ success: false, message: "No token provided" });
     }
 
     const token = authHeader.split(" ")[1];
@@ -43,56 +41,50 @@ export const authenticate = async (
       });
 
       if (!admin) {
-        return res.status(401).json({
-          success: false,
-          message: "Admin account no longer exists",
-        });
+        return res.status(401).json({ success: false, message: "Admin account no longer exists" });
       }
 
       if (!admin.isActive) {
-        return res.status(403).json({
-          success: false,
-          message: "Admin account has been deactivated",
-        });
+        return res.status(403).json({ success: false, message: "Admin account has been deactivated" });
       }
 
       req.user = {
         id: admin.id,
         email: admin.email,
         role: admin.role,
+        canApproveDownloads: admin.canApproveDownloads,
       };
 
       next();
     } catch (jwtError: any) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token",
-      });
+      return res.status(401).json({ success: false, message: "Invalid or expired token" });
     }
   } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Authentication failed",
-    });
+    return res.status(401).json({ success: false, message: "Authentication failed" });
   }
 };
 
 export const authorize = (...allowedRoles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
-
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden: Insufficient permissions",
-      });
+      return res.status(403).json({ success: false, message: "Forbidden: Insufficient permissions" });
     }
-
     next();
   };
+};
+
+export const authorizeDownloadApproval = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+  if (req.user.role === "super_admin" || req.user.canApproveDownloads) {
+    return next();
+  }
+  return res.status(403).json({
+    success: false,
+    message: "You do not have permission to approve or reject downloads",
+  });
 };

@@ -15,6 +15,13 @@
       "when": 1795080896705,
       "tag": "0001_blue_ben_urich",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795092052279,
+      "tag": "0002_early_strong_guy",
+      "breakpoints": true
     }
   ]
 }

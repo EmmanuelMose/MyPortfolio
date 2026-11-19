@@ -16,13 +16,7 @@ const logActivity = async (
   ipAddress: string
 ) => {
   try {
-    await db.insert(activityLogs).values({
-      userType,
-      userIdentifier,
-      actionType,
-      actionDetails,
-      ipAddress,
-    });
+    await db.insert(activityLogs).values({ userType, userIdentifier, actionType, actionDetails, ipAddress });
   } catch (error) {
     console.error("Failed to log activity:", error);
   }
@@ -72,13 +66,7 @@ export const registerService = async (data: {
     })
     .returning();
 
-  await logActivity(
-    "admin",
-    email,
-    "REGISTER",
-    `New admin registered: ${firstName} ${lastName}`,
-    ipAddress
-  );
+  await logActivity("admin", email, "REGISTER", `New admin registered: ${firstName} ${lastName}`, ipAddress);
 
   return newAdmin;
 };
@@ -88,41 +76,21 @@ export const loginService = async (email: string, password: string, ipAddress: s
     where: eq(registeredAdmins.email, email),
   });
 
-  if (!admin) {
-    throw new Error("Invalid credentials");
-  }
-
-  if (!admin.isActive) {
-    throw new Error("Account is deactivated. Please contact the Super Admin.");
-  }
+  if (!admin) throw new Error("Invalid credentials");
+  if (!admin.isActive) throw new Error("Account is deactivated. Please contact the Super Admin.");
 
   const isMatch = await bcrypt.compare(password, admin.passwordHash);
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
+  if (!isMatch) throw new Error("Invalid credentials");
 
-  await db
-    .update(registeredAdmins)
-    .set({ lastLogin: new Date() })
-    .where(eq(registeredAdmins.id, admin.id));
+  await db.update(registeredAdmins).set({ lastLogin: new Date() }).where(eq(registeredAdmins.id, admin.id));
 
   const token = jwt.sign(
-    {
-      id: admin.id,
-      email: admin.email,
-      role: admin.role,
-    },
+    { id: admin.id, email: admin.email, role: admin.role },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN as any }
   );
 
-  await logActivity(
-    admin.role,
-    admin.email,
-    "LOGIN",
-    `Admin logged in: ${admin.firstName} ${admin.lastName}`,
-    ipAddress
-  );
+  await logActivity(admin.role, admin.email, "LOGIN", `Admin logged in: ${admin.firstName} ${admin.lastName}`, ipAddress);
 
   return {
     token,
@@ -134,6 +102,7 @@ export const loginService = async (email: string, password: string, ipAddress: s
       lastName: admin.lastName,
       phoneNumber: admin.phoneNumber,
       role: admin.role,
+      canApproveDownloads: admin.canApproveDownloads,
       isActive: admin.isActive,
     },
   };
@@ -143,13 +112,10 @@ export const forgotPasswordService = async (email: string) => {
   const admin = await db.query.registeredAdmins.findFirst({
     where: eq(registeredAdmins.email, email),
   });
-
-  if (!admin) {
-    throw new Error("Admin with this email not found");
-  }
+  if (!admin) throw new Error("Admin with this email not found");
 
   const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
   await db
     .update(registeredAdmins)
@@ -159,18 +125,12 @@ export const forgotPasswordService = async (email: string) => {
   const html = `
     <h2>Password Reset Code</h2>
     <p>Hello ${admin.firstName},</p>
-    <p>You requested to reset your password. Your 6-digit reset code is:</p>
+    <p>Your 6-digit reset code is:</p>
     <h1 style="color: #1565C0; font-size: 32px; background: #f0f4ff; padding: 15px; border-radius: 8px; text-align: center; letter-spacing: 5px;">${resetCode}</h1>
     <p>This code will expire in 5 minutes.</p>
-    <p>If you did not request this, please ignore this email.</p>
   `;
 
-  await sendEmail(
-    email,
-    "Password Reset Code - Portfolio Admin",
-    `Your password reset code is: ${resetCode}`,
-    html
-  );
+  await sendEmail(email, "Password Reset Code - Portfolio Admin", `Your reset code is: ${resetCode}`, html);
 };
 
 export const verifyResetCodeService = async (email: string, code: string) => {
@@ -178,19 +138,12 @@ export const verifyResetCodeService = async (email: string, code: string) => {
     where: eq(registeredAdmins.email, email),
   });
 
-  if (!admin || !admin.resetCode || admin.resetCode !== code) {
-    throw new Error("Invalid reset code");
-  }
-
+  if (!admin || !admin.resetCode || admin.resetCode !== code) throw new Error("Invalid reset code");
   if (admin.resetCodeExpiresAt && new Date() > admin.resetCodeExpiresAt) {
     throw new Error("Reset code has expired. Please request a new one.");
   }
 
-  await db
-    .update(registeredAdmins)
-    .set({ isCodeVerified: true })
-    .where(eq(registeredAdmins.id, admin.id));
-
+  await db.update(registeredAdmins).set({ isCodeVerified: true }).where(eq(registeredAdmins.id, admin.id));
   return true;
 };
 
@@ -198,25 +151,14 @@ export const resetPasswordService = async (email: string, newPassword: string) =
   const admin = await db.query.registeredAdmins.findFirst({
     where: eq(registeredAdmins.email, email),
   });
-
-  if (!admin) {
-    throw new Error("Admin not found");
-  }
-
-  if (!admin.isCodeVerified) {
-    throw new Error("You must verify your reset code before changing your password.");
-  }
+  if (!admin) throw new Error("Admin not found");
+  if (!admin.isCodeVerified) throw new Error("You must verify your reset code before changing your password.");
 
   const passwordHash = await bcrypt.hash(newPassword, 10);
 
   await db
     .update(registeredAdmins)
-    .set({
-      passwordHash,
-      isCodeVerified: false,
-      resetCode: null,
-      resetCodeExpiresAt: null,
-    })
+    .set({ passwordHash, isCodeVerified: false, resetCode: null, resetCodeExpiresAt: null })
     .where(eq(registeredAdmins.id, admin.id));
 
   await sendEmail(
@@ -231,10 +173,7 @@ export const getMeService = async (id: number) => {
   const admin = await db.query.registeredAdmins.findFirst({
     where: eq(registeredAdmins.id, id),
   });
-
-  if (!admin) {
-    throw new Error("Admin not found");
-  }
+  if (!admin) throw new Error("Admin not found");
 
   return {
     id: admin.id,
@@ -244,6 +183,7 @@ export const getMeService = async (id: number) => {
     lastName: admin.lastName,
     phoneNumber: admin.phoneNumber,
     role: admin.role,
+    canApproveDownloads: admin.canApproveDownloads,
     isActive: admin.isActive,
     lastLogin: admin.lastLogin,
   };
