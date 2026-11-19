@@ -15,6 +15,10 @@ import contactRouter from "./contact/contact.router.js";
 import settingsRouter from "./settings/settings.router.js";
 import educationRouter from "./education/education.router.js";
 import experienceRouter from "./experience/experience.router.js";
+import technologiesRouter from "./technologies/technologies.router.js";
+import communityMomentsRouter from "./community-moments/community-moments.router.js";
+import pictorialsRouter from "./pictorials/pictorials.router.js";
+import resumeRouter from "./resume/resume.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -59,6 +63,10 @@ const initializeApp = () => {
   app.use("/api/settings", settingsRouter);
   app.use("/api/education", educationRouter);
   app.use("/api/experience", experienceRouter);
+  app.use("/api/technologies", technologiesRouter);
+  app.use("/api/community-moments", communityMomentsRouter);
+  app.use("/api/pictorials", pictorialsRouter);
+  app.use("/api/resume", resumeRouter);
 
   return app;
 };
