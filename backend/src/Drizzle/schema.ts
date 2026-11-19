@@ -95,6 +95,7 @@ export const contact = pgTable("contact", {
   phoneNumber: varchar("phone_number", { length: 50 }).notNull(),
   message: text("message").notNull(),
   contactMethod: varchar("contact_method", { length: 50 }).notNull(),
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

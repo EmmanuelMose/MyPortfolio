@@ -1,0 +1,1 @@
+ALTER TABLE "contact" ADD COLUMN "status" varchar(20) DEFAULT 'pending' NOT NULL;
