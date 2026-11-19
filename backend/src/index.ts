@@ -11,7 +11,8 @@ import heroSkillsRouter from "./hero-skills/hero-skills.router.js";
 import socialLinksRouter from "./social-links/social-links.router.js";
 import projectsRouter from "./projects/projects.router.js";
 import certificationsRouter from "./certifications/certifications.router.js";
-import contactRouter from "./contact/contact.router.js";
+import contactRouter from "./contact/contact.router.js"
+import settingsRouter from "./settings/settings.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -59,6 +60,8 @@ const initializeApp = () => {
   app.use("/api/projects", projectsRouter);
   app.use("/api/certifications", certificationsRouter);
   app.use("/api/contact", contactRouter);
+  app.use("/api/settings", settingsRouter);
+  
 
   return app;
 };
