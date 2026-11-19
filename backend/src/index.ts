@@ -19,6 +19,9 @@ import technologiesRouter from "./technologies/technologies.router.js";
 import communityMomentsRouter from "./community-moments/community-moments.router.js";
 import pictorialsRouter from "./pictorials/pictorials.router.js";
 import resumeRouter from "./resume/resume.router.js";
+import downloadRequestsRouter from "./download-requests/download-requests.router.js";
+import activityLogsRouter from "./activity-logs/activity-logs.router.js";
+import adminsRouter from "./admins/admins.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -53,6 +56,7 @@ const initializeApp = () => {
   });
 
   app.use("/api/auth", authRouter);
+  app.use("/api/admins", adminsRouter);
   app.use("/api/cloudinary", cloudinaryRouter);
   app.use("/api/hero-profile", heroProfileRouter);
   app.use("/api/hero-skills", heroSkillsRouter);
@@ -67,6 +71,8 @@ const initializeApp = () => {
   app.use("/api/community-moments", communityMomentsRouter);
   app.use("/api/pictorials", pictorialsRouter);
   app.use("/api/resume", resumeRouter);
+  app.use("/api/download-requests", downloadRequestsRouter);
+  app.use("/api/activity-logs", activityLogsRouter);
 
   return app;
 };
