@@ -10,6 +10,7 @@ import heroProfileRouter from "./hero-profile/hero-profile.router.js";
 import heroSkillsRouter from "./hero-skills/hero-skills.router.js";
 import socialLinksRouter from "./social-links/social-links.router.js";
 import projectsRouter from "./projects/projects.router.js";
+import certificationsRouter from "./certifications/certifications.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -55,6 +56,7 @@ const initializeApp = () => {
   app.use("/api/hero-skills", heroSkillsRouter);
   app.use("/api/social-links", socialLinksRouter);
   app.use("/api/projects", projectsRouter);
+  app.use("/api/certifications", certificationsRouter);
 
   return app;
 };
