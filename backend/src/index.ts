@@ -11,8 +11,9 @@ import heroSkillsRouter from "./hero-skills/hero-skills.router.js";
 import socialLinksRouter from "./social-links/social-links.router.js";
 import projectsRouter from "./projects/projects.router.js";
 import certificationsRouter from "./certifications/certifications.router.js";
-import contactRouter from "./contact/contact.router.js"
+import contactRouter from "./contact/contact.router.js";
 import settingsRouter from "./settings/settings.router.js";
+import educationRouter from "./education/education.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -29,14 +30,8 @@ const initializeApp = () => {
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin) {
-          return callback(null, true);
-        }
-
-        if (allowedOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
         console.log("Blocked origin:", origin);
         callback(new Error("Not allowed by CORS"));
       },
@@ -61,7 +56,7 @@ const initializeApp = () => {
   app.use("/api/certifications", certificationsRouter);
   app.use("/api/contact", contactRouter);
   app.use("/api/settings", settingsRouter);
-  
+  app.use("/api/education", educationRouter);
 
   return app;
 };
