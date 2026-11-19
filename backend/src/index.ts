@@ -14,6 +14,7 @@ import certificationsRouter from "./certifications/certifications.router.js";
 import contactRouter from "./contact/contact.router.js";
 import settingsRouter from "./settings/settings.router.js";
 import educationRouter from "./education/education.router.js";
+import experienceRouter from "./experience/experience.router.js";
 
 const initializeApp = () => {
   const app = express();
@@ -57,6 +58,7 @@ const initializeApp = () => {
   app.use("/api/contact", contactRouter);
   app.use("/api/settings", settingsRouter);
   app.use("/api/education", educationRouter);
+  app.use("/api/experience", experienceRouter);
 
   return app;
 };
